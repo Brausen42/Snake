@@ -324,7 +324,7 @@ class TwoPlayerSnake(SnakeGame):
         frame = Frame(self.root)
         message = ttk.Label(frame,text="It's a tie!!!",font="TkDefaultFont 48")
         restart = Button(frame,text = "Restart",command=self.startGame)
-        menu = Button(frame,text = "Main Menu", command=self.createMainScreen)
+        menu = Button(frame,text = "Main Menu", command=self.snakeMenu)
         
         message.grid()
         restart.grid()
@@ -337,7 +337,7 @@ class TwoPlayerSnake(SnakeGame):
         frame = Frame(self.root)
         message = ttk.Label(frame,text="The winner is "+snake.color+"!",font="TkDefaultFont 48")
         restart = Button(frame,text = "Restart",command=self.startGame)
-        menu = Button(frame,text = "Main Menu", command=self.createMainScreen)
+        menu = Button(frame,text = "Main Menu", command=self.snakeMenu)
         
         message.grid()
         restart.grid()
@@ -380,7 +380,7 @@ class PlayerVsAISnake(SnakeGame):
         frame = Frame(self.root)
         message = ttk.Label(frame,text="It's a tie!!!",font="TkDefaultFont 48")
         restart = Button(frame,text = "Restart",command=self.startGame)
-        menu = Button(frame,text = "Main Menu", command=self.createMainScreen)
+        menu = Button(frame,text = "Main Menu", command=self.snakeMenu)
         
         message.grid()
         restart.grid()
@@ -393,7 +393,7 @@ class PlayerVsAISnake(SnakeGame):
         frame = Frame(self.root)
         message = ttk.Label(frame,text="The winner is "+snake.color+"!",font="TkDefaultFont 48")
         restart = Button(frame,text = "Restart",command=self.startGame)
-        menu = Button(frame,text = "Main Menu", command=self.createMainScreen)
+        menu = Button(frame,text = "Main Menu", command=self.snakeMenu)
         
         message.grid()
         restart.grid()
