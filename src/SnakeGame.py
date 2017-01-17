@@ -15,11 +15,11 @@ class SnakeGame(Window):
 		# update root window to get an accurate grid size
 		self.root.update()
 		# set grid size based on window size
-		self.grid = ((self.root.winfo_width()//self.snakeSize)-1, (self.root.winfo_height()//self.snakeSize)-1) 
+		self.grid = ((self.root.winfo_width()//self.snakeSize)-1, (self.root.winfo_height()//self.snakeSize)-1)
 		self.startGame()
 		# allow root window to handle input
 		self.root.mainloop()
-	
+
 	def startGame(self):
 		# cover root window with a canvas
 		self.canvas = Canvas(self.root,
@@ -42,6 +42,8 @@ class SnakeGame(Window):
 		self.active = True
 		self.pause = False
 		self.speed = 100
+		# all active locations
+		self.occupied = {self.food.getPosition():[self.food.type]}
 
 	# all directional changes are only allowed to be made once per game loop to prevent turning into self
 	def goUp(self,event):
@@ -76,15 +78,16 @@ class SnakeGame(Window):
 		if not(snake.direction == "LEFT") and not(snake.commit):
 			snake.goRight()
 			snake.commit = True
-			
+
 	def check(self,first,second):
 		# check for collision between first and second
 		for snake in self.snakes:
 			if snake.getPosition() == second.getPosition():
 				return True
-	
+
 
 	def newFood(self):
+		self.occupied[self.food.getPosition()].remove(self.food.type)
 		# adjust game speed
 		self.speed = math.ceil(self.speed * .95)
 		# destroy old food
@@ -95,11 +98,15 @@ class SnakeGame(Window):
 			bad = False
 			xpos = self.snakeSize*random.randint(0,self.grid[0])
 			ypos = self.snakeSize*random.randint(0,self.grid[1])
-			for snake in self.snakes:
-				if (xpos,ypos) in snake.getPositionList():
-					bad = True
+			if (xpos,ypos) in self.occupied:
+				bad = True
 		# create the new food on the canvas
 		self.food = Food(self.canvas,self.snakeSize,xpos,ypos,"yellow")
+		if self.food.getPosition() in self.occupied:
+			print("WARNING: food placed at location that already contains a unit")
+			self.occupied[self.food.getPosition()].append(self.food.type)
+		else:
+			self.occupied[self.food.getPosition()] = [self.food.type]
 
 	def pauseGame(self,event):
 		if (not self.pause):
@@ -107,7 +114,7 @@ class SnakeGame(Window):
 			message = ttk.Label(self.pauseScreen,text="Paused",font="TkDefaultFont 48")
 			score = ttk.Label(self.pauseScreen,text = "Current score is: " + str(self.snakes[0].length))
 			note = ttk.Label(self.pauseScreen,text = "Press space to continue")
-			
+
 			message.grid()
 			score.grid()
 			note.grid()
@@ -115,7 +122,7 @@ class SnakeGame(Window):
 			self.canvas.create_window(self.snakeSize*(self.grid[0]//2), self.snakeSize*(self.grid[1]//2), window=self.pauseScreen)
 		else:
 			self.pauseScreen.destroy()
-			
+
 		self.pause = not(self.pause)
 		self.loop()
 
@@ -126,7 +133,7 @@ class SnakeGame(Window):
 		score = ttk.Label(frame,text = "Your score is " + str(self.snakes[0].length))
 		restart = Button(frame,text = "Restart",command=self.startGame)
 		menu = Button(frame,text = "Main Menu", command=self.snakeMenu)
-		
+
 		message.grid()
 		score.grid()
 		restart.grid()
@@ -144,11 +151,11 @@ class SnakeGame(Window):
 				if pos == unit.getPosition():
 					return True
 		return False
-		
+
 	def loop(self):
 		if not(self.pause) and self.active:
 			for snake in self.snakes:
-				snake.move()
+				snake.move(self.occupied)
 				if self.check(snake,self.food):
 					snake.anotherOne()
 					self.newFood()
@@ -157,7 +164,7 @@ class SnakeGame(Window):
 				if self.collide(snake):
 					self.end()
 			self.root.after(self.speed,self.loop)
-			
+
 	def snakeMenu(self):
 		self.exit()
 		from SnakeMenu import SnakeMenu

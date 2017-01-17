@@ -3,6 +3,7 @@ from Unit import *
 class Mine(Unit):
 	def __init__(self,master,size,x,y,color):
 		super().__init__(master,size,x,y,color)
+		self.type = UnitType.mine
 
 	def create(self):
 		self.unit = self.master.create_polygon(self.x,

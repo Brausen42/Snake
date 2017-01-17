@@ -9,14 +9,16 @@ class SinglePlayerSnake(SnakeGame):
 		super().startGame()
 
 		self.snakes = [Snake(self.canvas,self.snakeSize, self.snakeSize*(self.grid[0]//2), self.snakeSize*(self.grid[1]//2), "green",self.grid)]
-		
+		# TODO: make getting the type of the snake less error prone
+		self.occupied[self.snakes[0].getPosition()] = [self.snakes[0].body[0].type]
+
 		self.mines = []
-		
+
 		self.loop()
 
 	def loop(self):
 		if not(self.pause) and self.active:
-			if (not self.snakes[0].move()) or self.checkMine(self.mines):
+			if (not self.snakes[0].move(self.occupied)) or self.checkMine(self.mines):
 				self.end()
 			if self.check(self.snakes[0],self.food):
 				self.snakes[0].anotherOne()
@@ -29,22 +31,6 @@ class SinglePlayerSnake(SnakeGame):
 					self.end()
 			self.root.after(self.speed,self.loop)
 
-	def newFood(self):
-		self.speed = math.ceil(self.speed * .98)
-		self.food.destroy()
-		bad = True
-		while bad:
-			bad = False
-			xpos = self.snakeSize*random.randint(0,self.grid[0])
-			ypos = self.snakeSize*random.randint(0,self.grid[1])
-			for mine in self.mines:
-				if mine.getPosition == (xpos,ypos):
-					bad = True
-			for snake in self.snakes:
-				if (xpos,ypos) in snake.getPositionList():
-					bad = True
-				
-		self.food = Food(self.canvas,self.snakeSize,xpos,ypos,"yellow")
 
 	def createMine(self):
 		bad = True
@@ -57,9 +43,14 @@ class SinglePlayerSnake(SnakeGame):
 					bad = True
 			for snake in self.snakes:
 				if (xpos,ypos) in snake.getPositionList():
-					bad = True 
+					bad = True
 
 		self.mines.append(Mine(self.canvas,self.snakeSize,self.snakeSize*random.randint(0,self.grid[0]),self.snakeSize*random.randint(0,self.grid[1]),"red"))
+		if self.mines[-1].getPosition() in self.occupied:
+			print("WARNING: mine placed at location that already contains a unit")
+			self.occupied[self.mines[-1].getPosition()].append(self.mines[-1].type)
+		else:
+			self.occupied[self.mines[-1].getPosition()] = [self.mines[-1].type]
 
 	def checkMine(self,mines):
 		for mine in mines:

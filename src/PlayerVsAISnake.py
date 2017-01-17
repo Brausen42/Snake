@@ -8,14 +8,15 @@ class PlayerVsAISnake(SnakeGame):
 		super().startGame()
 		self.snakes = [Snake(self.canvas,self.snakeSize, self.snakeSize*((self.grid[0]//2) - 5), self.snakeSize*(self.grid[1]//2), "green",self.grid),
 						 Snake(self.canvas,self.snakeSize, self.snakeSize*((self.grid[0]//2) + 5), self.snakeSize*(self.grid[1]//2), "blue",self.grid)]
-
+		self.occupied[self.snakes[0].getPosition()] = [self.snakes[0].body[0].type]
+		self.occupied[self.snakes[1].getPosition()] = [self.snakes[1].body[0].type]
 		self.loop()
 
 	def loop(self):
 		if not(self.pause) and self.active:
 			self.snakeAI(self.snakes,1)
 			for snake in self.snakes:
-				snake.move()
+				snake.move(self.occupied)
 				if self.check(snake,self.food):
 					snake.anotherOne()
 					self.newFood()
@@ -36,7 +37,7 @@ class PlayerVsAISnake(SnakeGame):
 		message = ttk.Label(frame,text="It's a tie!!!",font="TkDefaultFont 48")
 		restart = Button(frame,text = "Restart",command=self.startGame)
 		menu = Button(frame,text = "Main Menu", command=self.snakeMenu)
-		
+
 		message.grid()
 		restart.grid()
 		menu.grid()
@@ -49,7 +50,7 @@ class PlayerVsAISnake(SnakeGame):
 		message = ttk.Label(frame,text="The winner is "+snake.color+"!",font="TkDefaultFont 48")
 		restart = Button(frame,text = "Restart",command=self.startGame)
 		menu = Button(frame,text = "Main Menu", command=self.snakeMenu)
-		
+
 		message.grid()
 		restart.grid()
 		menu.grid()
@@ -68,5 +69,3 @@ class PlayerVsAISnake(SnakeGame):
 			snakelist[mySnake].goDown()
 		else:
 			snakelist[mySnake].goUp()
-			
-

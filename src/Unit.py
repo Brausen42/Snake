@@ -2,6 +2,12 @@
 
 from tkinter import *
 from tkinter import ttk
+from enum import Enum
+
+class UnitType(Enum):
+	unit = 0
+	food = 1
+	mine = 2
 
 class Unit:
 	def __init__(self,master,size,x,y,color):
@@ -10,7 +16,8 @@ class Unit:
 		self.size = size
 		self.color = color
 		self.master = master
-		
+		self.type = UnitType.unit
+
 		self.create()
 
 	def create(self):

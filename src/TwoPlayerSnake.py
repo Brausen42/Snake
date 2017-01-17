@@ -10,7 +10,7 @@ class TwoPlayerSnake(SnakeGame):
 
 	def startGame(self):
 		super().startGame()
-		# additional bindings for player 2   
+		# additional bindings for player 2
 		self.root.bind("<Left>",self.goLeft)
 		self.root.bind("<Up>",self.goUp)
 		self.root.bind("<Down>",self.goDown)
@@ -18,6 +18,8 @@ class TwoPlayerSnake(SnakeGame):
 		# add two snakes, one for each player
 		self.snakes = [Snake(self.canvas,self.snakeSize, self.snakeSize*((self.grid[0]//2) - 5), self.snakeSize*(self.grid[1]//2), "green",self.grid),
 						 Snake(self.canvas,self.snakeSize, self.snakeSize*((self.grid[0]//2) + 5), self.snakeSize*(self.grid[1]//2), "blue",self.grid)]
+		self.occupied[self.snakes[0].getPosition()] = [self.snakes[0].body[0].type]
+		self.occupied[self.snakes[1].getPosition()] = [self.snakes[1].body[0].type]
 		# start game loop
 		self.loop()
 
@@ -26,7 +28,7 @@ class TwoPlayerSnake(SnakeGame):
 		if not(self.pause) and self.active:
 			# move all the snakes
 			for snake in self.snakes:
-				snake.move()
+				snake.move(self.occupied)
 				if self.check(snake,self.food):
 					# snake ate food so grow it
 					snake.anotherOne()
